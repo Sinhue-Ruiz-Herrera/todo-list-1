@@ -1,126 +1,49 @@
-<div>
-  <div>
-    <h1>
-      List of all todos
-    </h1>
-  </div>
-</div>
+<h1>Your todo list</h1>
 
-<hr>
-  <body>
-      <a href="/">Your todo list</a>
-      |
-      <a href="/edit_user_profile">Edit profile</a>
-      |
-      <a href="/user_sign_out">Sign out</a>
+  <h2>
+    Add a new todo
+  </h2>
 
-    <h1>Your todo list</h1>
+  <form action="/insert_todo" method="post">
+    <div>
+      <label for="content_box">
+         Describe the task:
+      </label>
 
-<div>
-  <div>
-    <h2>
-      Add a new todo
-    </h2>
+     <input type="text" id="content_box" name="query_content">
+    </div>
 
-    <form action="/insert_todo" method="post">
-      <div>
-        <label for="content_box">
-          Describe the task:
-        </label>
-         <input type="text" id="content_box" name="query_content">
-      </div>
-
-      <div>
-        <label for="status_box">
-          Status
-        </label>
-
-        <input type="text" id="status_box" name="query_status">
-      </div>
-
-      <div>
-  
-
-        <input type="hidden"  name="query_user_id" value="<%= @current_user.id%>">
-      </div>
-
-      <button>
+    <button>
       Add to Next Up
-      </button>
+    </button>
     </form>
+
   </div>
 </div>
 <div class="next_up">
   <h2>Next Up</h2>
-<hr>
-<div>
-  <div>
-    <table border="1">
-      <tr>
-        <th>
-          ID
-        </th>
- 
-  <h2>Next Up</h2>
-      <li>
-        <th>
-          Content
-        </th>
-
-        <th>
-          Status
-        </th>
-
-        <th>
-          User
-        </th>
-
-        <th>
-          Created at
-        </th>
-
-        <th>
-          Updated at
-        </th>
-
-        <th>
-        </th>
-      </tr>
-
-      <% @list_of_todos.each do |a_todo| %>
-      <tr>
-        <td>
-          <%= a_todo.id %>
-        </td>
-
-        <td>
-          <%= a_todo.content %>
-        </td>
-
-        <td>
-          <%= a_todo.status %>
-        </td>
-
-        <td>
-          <%= a_todo.user_id %>
-        </td>
-
-        <td>
-          <%= time_ago_in_words(a_todo.created_at) %> ago
-        </td>
-        <td>
-          <%= time_ago_in_words(a_todo.updated_at) %> ago
-        </td>
-
-        <td>
-          <a href="/todos/<%= a_todo.id %>">
-            Show details
-          </a>
-        </td>
-      </tr>
-      <% end %>
-    </table>
-  </div>
+  <ul>
+ <% @list_of_todos.each do |todo| %>
+     <li><%= todo.content %><a href="/delete_todo/<%= todo.id %>">Delete</a><p><%=time_ago_in_words(todo.created_at)%> ago</p></li>
+      </ul>
+       <form action="/modify_todo/<%=todo.id%>" method="post">
+          <input type="hidden" name="query_status" value="next_up">
+          <button>Move to In Progress</button>
+        </form>
+        <%end%>
 </div>
 
-<hr>
+<div class="in_progress">
+<h2>In progress</h2>
+ <% @list_of_todos.each do |todo| %>
+      <% if todo.status == "next_up" %>
+        <li><%= todo.content %><a href="/delete_todo/<%= todo.id %>">Delete</a>Started <%= time_ago_in_words(todo.updated_at).gsub(/about /, '') %> ago </li>
+
+        <form action="/modify_todo/<%=todo.id%>" method="post">
+          <input type="hidden" name="query_status" value="done">
+          <button>Move to Done</button>
+        </form>
+      <% end %>
+    <% end %>
+  </ul>
+</div>
